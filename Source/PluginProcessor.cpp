@@ -181,6 +181,9 @@ void DistortionAudioProcessor::prepareToPlay (double sampleRate, int samplesPerB
     float smoothing_half_time_convergence_seconds = 0.020f;
     float smoothing_half_time_convergence_samples = sampleRate * smoothing_half_time_convergence_seconds;
     smoothing_koef = exp(-log(2)/ smoothing_half_time_convergence_samples);
+
+    dc_k = exp(-log(2) / (sampleRate/100));
+    mean[0] = mean[1] = 0.f;
 }
 
 void DistortionAudioProcessor::releaseResources()
@@ -327,8 +330,17 @@ void DistortionAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
             float gate_k = gate_koef(channelData[channel][sample] * inGain, gateParam);
             float zero_level = current_effect_function(biasParam, depthParam);
 
-            float wet = outGain * (gate_k * current_effect_function(channelData[channel][sample] * inGain + biasParam, depthParam) + (1 - gate_k) * zero_level);
-            
+            float wet = (gate_k * current_effect_function(channelData[channel][sample] * inGain + biasParam, depthParam) + (1 - gate_k) * zero_level);
+
+            if (dcIsOn) {
+                mean[channel] = dc_k * mean[channel] + (1 - dc_k) * wet;
+                //mean[channel] = double(dc_k) * (double(mean[channel]) - double(wet)) + double(wet);
+                wet -= mean[channel];
+            }
+
+            wet *= outGain;
+
+
             rmsOutLocal[channel] += wet * wet;
             channelData[channel][sample] = (1.f - mixParam) * channelData[channel][sample] + mixParam * wet;
         }
@@ -340,6 +352,8 @@ void DistortionAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
         else { rmsOut[i].setTargetValue(rmsOutLocal[i]); }
     }
    
+    //DBG(mean[1]);
+    //DBG(channelData[1][0]);
 
     rmsIn[0].skip(totalNumSamples);
     rmsIn[1].skip(totalNumSamples);
@@ -366,12 +380,20 @@ void DistortionAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
+    auto state = parameters.copyState();
+    std::unique_ptr<juce::XmlElement> xml(state.createXml());
+    copyXmlToBinary(*xml, destData);
 }
 
 void DistortionAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+    std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+    if (xmlState.get()) {
+        if (xmlState->hasTagName(parameters.state.getType()))
+            parameters.replaceState(juce::ValueTree::fromXml(*xmlState));
+    }
 }
 
 //==============================================================================

@@ -238,6 +238,10 @@ public:
 
     float smoothing_koef;
 
+    bool dcIsOn = false;
+    double dc_k;
+    double mean[2] = { 0, 0 };
+
     std::function< float(float, float)> current_effect_function = distortion_functions[1];
 
 private:

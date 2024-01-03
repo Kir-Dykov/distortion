@@ -56,9 +56,12 @@ private:
     juce::TextButton effectTypeButtonsSaturation[2];
     juce::TextButton effectTypeButtonsFold[3];
     juce::TextButton effectTypeButtonsFoldScale[2];
+
+
     int activeFoldButtonIndex = -1;
     int activeFoldScaleButtonIndex = 0;
 
+    juce::TextButton dcButton;
 
     // Parameter Attachments
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> depthAttachment;

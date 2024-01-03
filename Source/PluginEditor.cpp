@@ -1,4 +1,4 @@
-﻿/*
+/*
   ==============================================================================
 
     This file contains the basic framework code for a JUCE plugin editor.
@@ -125,6 +125,18 @@ DistortionAudioProcessorEditor::DistortionAudioProcessorEditor (DistortionAudioP
     //typeChoices.setBounds(0, getHeight() * 0.25, getWidth() * 0.25, getHeight() * 0.5);
     //mixSlider.setBounds(10, 30, getWidth() - 20, 40);
 
+
+
+    addAndMakeVisible(dcButton);
+    dcButton.setButtonText("dc");
+    dcButton.setClickingTogglesState(true);
+    dcButton.onClick = [this] {
+        audioProcessor.dcIsOn ^= true;
+    };
+    dcButton.setColour(juce::TextButton::buttonOnColourId, juce::Colours::black); // Set default color
+    dcButton.setColour(juce::TextButton::buttonColourId, juce::Colours::darkblue); // Set default color  
+
+
     const int effectTypeButtonX = 10;
     const int effectTypeButtonY = getHeight() / 4;
     const int effectTypeButtonPad = 10;
@@ -134,8 +146,6 @@ DistortionAudioProcessorEditor::DistortionAudioProcessorEditor (DistortionAudioP
 
     juce::String effectTypeButtonsSaturationNames [2] = {"clip", "jam"};
     
-
-
     for (int i = 0; i < 2; i++) {
         addAndMakeVisible(effectTypeButtonsSaturation[i]);
         effectTypeButtonsSaturation[i].setButtonText(effectTypeButtonsSaturationNames[i]);
@@ -424,6 +434,7 @@ void DistortionAudioProcessorEditor::resized()
     gateSlider.setBounds(getWidth() * 0.51, getHeight() * (0.49 + 0.125), getWidth() * 0.125, getWidth() * 0.150);
     biasSlider.setBounds(getWidth() * (0.49 + 0.125), getHeight() * 0.51, getWidth() * 0.125, getWidth() * 0.150);
 
+    dcButton.setBounds(getWidth()*(0.505 + 0.125*0.75 - 0.05), getHeight()*(0.505 + 0.125*0.75 - 0.05), getWidth() * 0.05, getWidth() * 0.05);
     /*{
         int width = getWidth() / 4 / 4;
         expParamSlider.setBounds(getWidth() - width, 0.25 * getHeight() + 40 + 3 + (0.25 * getWidth() - 3 * 3) * 0.25, width, width);
