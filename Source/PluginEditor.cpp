@@ -21,7 +21,8 @@ const int border = 0;
 //==============================================================================
 DistortionAudioProcessorEditor::DistortionAudioProcessorEditor (DistortionAudioProcessor& processor)
     : AudioProcessorEditor (&processor), audioProcessor (processor), 
-    depthSlider("depth"), mixSlider("mix"), gateSlider("gate"), biasSlider("bias"), inGainSlider("pre"), outGainSlider("post")
+    depthSlider("depth"), mixSlider("mix"), gateSlider("gate"), biasSlider("bias"), inGainSlider("pre"), outGainSlider("post"),
+    depthAttachment(audioProcessor.parameters, "Depth", depthSlider)
 {
     juce::LookAndFeel::setDefaultLookAndFeel(&myCustomLNF);
     juce::Font::setDefaultMinimumHorizontalScaleFactor(.1f);
@@ -92,8 +93,8 @@ DistortionAudioProcessorEditor::DistortionAudioProcessorEditor (DistortionAudioP
 
 
     // Attach the gain parameter to the slider
-    depthAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
-        processor.parameters, "Depth", depthSlider);
+    /*depthAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
+        processor.parameters, "Depth", depthSlider);*/
 
     gateAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
         processor.parameters, "Gate", gateSlider);

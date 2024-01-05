@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="iNesBz" name="Distortion" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" displaySplashScreen="0" jucerFormatVersion="1">
+              addUsingNamespaceToJuceHeader="0" displaySplashScreen="0" jucerFormatVersion="1"
+              cppLanguageStandard="20">
   <MAINGROUP id="e2RHze" name="Distortion">
     <GROUP id="{7661F192-C860-C767-BEF3-1E8CD8E53D0F}" name="MyBinaryData">
       <FILE id="BRJdEl" name="segoeprint.ttf" compile="0" resource="1" file="Source/res/Segoe Print/segoeprint.ttf"/>
